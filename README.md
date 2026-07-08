@@ -1,99 +1,178 @@
-# Teaching E-Commerce API - FinalProject
+# E-Commerce API Testing Project
 
 ## Project Overview
 
-This project contains API testing for the Teaching E-Commerce REST API using Postman.
+This project contains API testing for an E-Commerce REST API using Postman.
 
-The collection covers the main features of the application, including authentication, user management, products, categories, shopping cart, coupons, checkout, orders, reviews, and reports.
+The main goal of this project is to verify API functionality, validate responses, test authentication, and ensure that all endpoints work correctly according to expected requirements.
 
-The project includes positive and negative test cases, response validation, status code verification, and automated assertions using Postman Tests.
-
----
-
-## Technologies Used
-
-- Postman
-- REST API
-- JSON
-- JavaScript (Postman Tests)
-- Newman
+The project covers testing different modules including authentication, products, categories, cart, checkout, orders, reviews, wishlist, and admin functionalities.
 
 ---
 
-## Tested Modules
+## Tools & Technologies
 
-- Authentication
-  - Register
-  - Login
-  - Refresh Token
-  - Forgot Password
-  - Change Password
-
-- User Profile
-
-- Categories
-
-- Products
-
-- Shopping Cart
-
-- Coupons
-
-- Checkout
-
-- Orders
-
-- Order Tracking
-
-- Reviews
-
-- Reports
+* Postman
+* REST API
+* JSON
+* JavaScript (Postman Test Scripts)
 
 ---
 
-## Test Coverage
+## API Modules Tested
 
-The collection includes:
+### Authentication
 
-- Positive Test Cases
-- Negative Test Cases
-- Status Code Validation
-- Response Body Validation
-- Response Time Validation
-- JSON Schema Validation
-- Data Type Validation
-- Required Fields Validation
-- Error Message Validation
-- Authentication Testing
+* Register User
+* Login
+* Refresh Token
+* Forgot Password
+* Reset Password
+* Change Password
+* Admin Login
+
+### Products
+
+* Get All Products
+* Get Product By ID
+* Search Products
+* Filter Products
+* Top Products
+
+### Categories
+
+* Get Categories
+* Get Products By Category
+
+### Profile
+
+* Get User Profile
+* Update Profile
+
+### Reviews
+
+* Add Review
+* Get Product Reviews
+
+### Wishlist
+
+* Add Product
+* Remove Product
+* View Wishlist
+
+### Cart
+
+* Add Product To Cart
+* Update Cart Quantity
+* Remove Product From Cart
+* View Cart
+* Apply Coupon
+
+### Checkout
+
+* Checkout Process
+* Payment Validation
+
+### Orders
+
+* Create Order
+* Get Order History
+* Get Order Details
+* Order Tracking
+* Cancel Order
+
+### Admin
+
+* Create Product
+* Update Product
+* Delete Product
+* View Analytics
 
 ---
 
-## Assertions Used
+## Testing Coverage
 
-Examples of assertions included in the collection:
+The project includes:
 
-- Response status code
-- Response time
-- Response body is not empty
-- JSON data type validation
-- Required properties validation
-- Array validation
-- Token validation
-- Error response validation
+* Status Code Validation
+* Response Body Validation
+* Response Time Validation
+* JSON Data Validation
+* Required Fields Validation
+* Data Type Validation
+* Header Validation
+* Authentication Testing
+* Authorization Testing
+* CRUD Operations Testing
+* Business Logic Testing
+* Error Handling Testing
 
 ---
 
-## How to Run
+## Test Scenarios
 
-1. Import the Postman Collection.
-2. Import the Environment (if available).
-3. Set the Base URL.
-4. Execute requests individually or run the entire collection using Collection Runner.
-5. Generate reports using Newman (optional).
+### Positive Test Cases
+
+* Successful registration
+* Successful login
+* Retrieve products successfully
+* Add items to cart
+* Complete checkout
+* Create orders successfully
+
+---
+## Postman Collection Features
+
+* Organized request folders
+* Environment variables
+* Token management
+* Automated test scripts
+* Response assertions
+* Reusable test validations
+
+---
+
+---
+
+## How To Run
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/API-Testing-Project.git
+```
+
+2. Open Postman.
+
+3. Import:
+
+   * Collection JSON file
+
+5. Run requests individually or use Collection Runner.
 
 ---
 
 ## Author
 
-**Rania Ahmad**
+**Rania Ahmad AbuTafesh**
+
 Junior Software QA Engineer
+
+### Skills
+
+* Manual Testing
+* API Testing
+* Postman
+* Selenium WebDriver
+* Java
+* TestNG
+* JMeter
+* Jira
+* SQL
+* Git & GitHub
+
+---
+
+## Project Purpose
+
+This project demonstrates practical experience in API testing using Postman, including endpoint validation, authentication testing, response verification, and real-world E-Commerce API workflows.
