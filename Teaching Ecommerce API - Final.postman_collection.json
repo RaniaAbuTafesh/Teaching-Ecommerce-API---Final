@@ -1,0 +1,2940 @@
+{
+  "info": {
+    "_postman_id": "2639f801-dadd-4cb2-8127-c32034c6f3d6",
+    "name": "Teaching Ecommerce API - Final",
+    "description": "Final full collection with auth, products, categories, reviews, wishlist, cart, checkout, orders, and admin APIs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55436480",
+    "_collection_link": "https://go.postman.co/collection/55436480-2639f801-dadd-4cb2-8127-c32034c6f3d6?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  " var jsonData = pm.response.json();\r",
+                  " pm.test(\"Status is ok\", function(){\r",
+                  " pm.expect(jsonData.status).to.eql(\"ok\")\r",
+                  " });\r",
+                  "pm.test(\"Message is correct\", function () {\r",
+                  "    pm.expect(jsonData.message).to.eql(\"API is running\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            },
+            "description": "Verify API server is running."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth - Student",
+      "item": [
+        {
+          "name": "Register Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();\r",
+                  "\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    pm.test(\"Success registration\", function () {\r",
+                  "        pm.expect(jsonData.message).to.eql(\"Account created\");\r",
+                  "    });\r",
+                  "}\r",
+                  "else if (pm.response.code === 409) {\r",
+                  "    pm.test(\"Email already exists\", function () {\r",
+                  "        pm.expect(jsonData.message).to.eql(\"Email already exists\");\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{name}}\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"role\": \"student\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set('token', json.token);",
+                  "pm.collectionVariables.set('refreshToken', json.refreshToken);",
+                  "",
+                  "pm.test(\"Login successful message\", function () {",
+                  "    pm.expect(json.message).to.eql(\"Login successful\");",
+                  "});",
+                  "",
+                  "pm.test(\"Token is valid\", function () {",
+                  "    pm.expect(json.token).to.exist;",
+                  "    pm.expect(json.token).to.be.a(\"string\");",
+                  "    pm.expect(json.token).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"Refresh token is valid\", function () {",
+                  "    pm.expect(json.refreshToken).to.exist;",
+                  "    pm.expect(json.refreshToken).to.be.a(\"string\");",
+                  "    pm.expect(json.refreshToken).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"User object exists\", function () {",
+                  "    pm.expect(json.user).to.exist;",
+                  "});",
+                  "pm.test(\"Email is correct\", function () {",
+                  "    pm.expect(json.user.email).to.eql(pm.collectionVariables.get(\"email\"));",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Student Access Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  if (json.token) pm.collectionVariables.set('token', json.token);",
+                  "}",
+                  "var json = pm.response.json();",
+                  "",
+                  "pm.test(\"Access token exists\", function () {",
+                  "    pm.expect(json.token).to.exist;",
+                  "});",
+                  "",
+                  "pm.test(\"Access token is not empty\", function () {",
+                  "    pm.expect(json.token).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"Access token is a string\", function () {",
+                  "    pm.expect(json.token).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "   let jsonData = pm.response.json();\r",
+                  " pm.test(\"Password changed successfully\", function () {\r",
+                  "    pm.expect(jsonData.message).to.eql(\"Password changed\");\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"{{password}}\",\n  \"newPassword\": \"123456786\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "change-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password (Get Reset Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  if (json.resetToken) pm.collectionVariables.set('resetToken', json.resetToken);",
+                  "}",
+                  "",
+                  "",
+                  "let jsonData = pm.response.json();",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Message is correct\", function () {",
+                  "    pm.expect(jsonData.message).to.eql(\"Reset token generated (fake email step).\");",
+                  "});",
+                  "",
+                  "pm.test(\"Reset token is valid\", function () {",
+                  "    pm.expect(jsonData.resetToken).to.exist;",
+                  "    pm.expect(jsonData.resetToken).to.be.a(\"string\");",
+                  "    pm.expect(jsonData.resetToken).to.not.be.empty;",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "  var jsonData= pm.response.json();\r",
+                  "  \r",
+                  "  pm.test(\"Message is correct\", function () {\r",
+                  "    pm.expect(jsonData.message).to.eql(\"Password reset successful\")\r",
+                  "  });\r",
+                  "  pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resetToken\": \"{{resetToken}}\",\n  \"newPassword\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "let jsonData = pm.response.json();\r",
+                  "pm.test(\"Message is correct\", function(){\r",
+                  "    pm.expect(jsonData.message).to.eql(\"Logged out\")\r",
+                  "\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth - Admin",
+      "item": [
+        {
+          "name": "Register Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('adminToken', json.token);",
+                  "  pm.collectionVariables.set('adminRefreshToken', json.refreshToken);",
+                  "}",
+                  "",
+                  "pm.test(\"Account created message\", function () {",
+                  "    pm.expect(json.message).to.eql(\"Account created\");",
+                  "});",
+                  "pm.test(\"Token is valid\", function(){",
+                  " pm.expect(json.token).to.exist;",
+                  " pm.expect(json.token).to.be.a(\"string\");",
+                  "",
+                  "});  "
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Teacher Admin\",\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\",\n  \"role\": \"admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('adminToken', json.token);",
+                  "  pm.collectionVariables.set('adminRefreshToken', json.refreshToken);",
+                  "}",
+                  "",
+                  "pm.test(\"Login successful message\", function () {",
+                  "    pm.expect(json.message).to.eql(\"Login successful\");",
+                  "});",
+                  "",
+                  "pm.test(\"Token is valid\", function () {",
+                  "    pm.expect(json.token).to.exist;",
+                  "    pm.expect(json.token).to.be.a(\"string\");",
+                  "    pm.expect(json.token).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"Refresh token is valid\", function () {",
+                  "    pm.expect(json.refreshToken).to.exist;",
+                  "    pm.expect(json.refreshToken).to.be.a(\"string\");",
+                  "    pm.expect(json.refreshToken).to.not.be.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"User data is valid\", function () {",
+                  "    pm.expect(json.user).to.exist;",
+                  "    pm.expect(json.user.role).to.eql(\"admin\");",
+                  "    pm.expect(json.user.id).to.be.a(\"number\");",
+                  "    pm.expect(json.user.email).to.include(\"@\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get Products (Search/Filter/Pagination)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  " let json = pm.response.json();\r",
+                  "pm.test(\"Data is array\", function () {\r",
+                  "    pm.expect(json.data).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Data is not empty\", function () {\r",
+                  "    pm.expect(json.data.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product structure is valid\", function () {\r",
+                  "    json.data.forEach(product => {\r",
+                  "        pm.expect(product).to.have.property(\"id\");\r",
+                  "        pm.expect(product).to.have.property(\"name\");\r",
+                  "        pm.expect(product).to.have.property(\"price\");\r",
+                  "        pm.expect(product).to.have.property(\"stock\");\r",
+                  "        pm.expect(product).to.have.property(\"description\");\r",
+                  "        pm.expect(product).to.have.property(\"categoryId\")\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination is valid\", function () {\r",
+                  "    pm.expect(json.page).to.be.a(\"number\");\r",
+                  "    pm.expect(json.limit).to.be.a(\"number\");\r",
+                  "    pm.expect(json.total).to.be.a(\"number\");\r",
+                  "    pm.expect(json.totalPages).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Total matches data length or logic\", function () {\r",
+                  "    pm.expect(json.total).to.be.at.least(json.data.length);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Price is valid\", function () {\r",
+                  "    json.data.forEach(p => {\r",
+                  "        pm.expect(p.price).to.be.above(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Stock is not negative\", function () {\r",
+                  "    json.data.forEach(p => {\r",
+                  "        pm.expect(p.stock).to.be.at.least(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is less than 200ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products?minPrice=10&maxPrice=100&page=1&limit=10&sortBy=price&sortOrder=asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "shirt",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "10"
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "100"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "price"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "asc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "let json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Product has all required properties\", function () {\r",
+                  "    pm.expect(json).to.have.property(\"id\");\r",
+                  "    pm.expect(json).to.have.property(\"name\");\r",
+                  "    pm.expect(json).to.have.property(\"price\");\r",
+                  "    pm.expect(json).to.have.property(\"stock\");\r",
+                  "    pm.expect(json).to.have.property(\"description\");\r",
+                  "    pm.expect(json).to.have.property(\"categoryId\");\r",
+                  "    pm.expect(json).to.have.property(\"reviewsCount\");\r",
+                  "    pm.expect(json).to.have.property(\"avgRating\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Properties have correct data types\", function () {\r",
+                  "    pm.expect(json.id).to.be.a(\"number\");\r",
+                  "    pm.expect(json.name).to.be.a(\"string\");\r",
+                  "    pm.expect(json.price).to.be.a(\"number\");\r",
+                  "    pm.expect(json.stock).to.be.a(\"number\");\r",
+                  "    pm.expect(json.description).to.be.a(\"string\");\r",
+                  "    pm.expect(json.categoryId).to.be.a(\"number\");\r",
+                  "    pm.expect(json.reviewsCount).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product name is not empty\", function () {\r",
+                  "    pm.expect(json.name).to.not.be.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Description is not empty\", function () {\r",
+                  "    pm.expect(json.description).to.not.be.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Price is greater than zero\", function () {\r",
+                  "    pm.expect(json.price).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Stock is zero or greater\", function () {\r",
+                  "    pm.expect(json.stock).to.be.at.least(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is less than 200ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get Categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Categories list is not empty\", function () {\r",
+                  "    pm.expect(json.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each category has id and name\", function () {\r",
+                  "    json.forEach(category => {\r",
+                  "        pm.expect(category).to.have.property(\"id\");\r",
+                  "        pm.expect(category).to.have.property(\"name\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "    pm.test(\"Category data types are correct\", function () {\r",
+                  "        json.forEach(category => {\r",
+                  "        pm.expect(category.id).to.be.a(\"number\");\r",
+                  "        pm.expect(category.name).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "});\r",
+                  "    pm.test(\"Category name is not empty\", function () {\r",
+                  "        json.forEach(category => {\r",
+                  "        pm.expect(category.name).to.not.be.empty;\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "   pm.test(\"Category id is valid\", function () {\r",
+                  "        json.forEach(category => {\r",
+                  "        pm.expect(category.id).to.be.above(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Products By Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Category name is not empty\", function () {\r",
+                  "    pm.expect(json.category.name).to.not.be.empty;\r",
+                  "});\r",
+                  "pm.test(\"Response has category and products\", function () {\r",
+                  "    pm.expect(json).to.have.property(\"category\");\r",
+                  "    pm.expect(json).to.have.property(\"products\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Category object is valid\", function () {\r",
+                  "    pm.expect(json.category.id).to.be.a(\"number\");\r",
+                  "    pm.expect(json.category.name).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Products is an array\", function () {\r",
+                  "    pm.expect(json.products).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each product has required fields\", function () {\r",
+                  "\r",
+                  "    json.products.forEach(product => {\r",
+                  "\r",
+                  "        pm.expect(product).to.have.property(\"id\");\r",
+                  "        pm.expect(product).to.have.property(\"name\");\r",
+                  "        pm.expect(product).to.have.property(\"price\");\r",
+                  "        pm.expect(product).to.have.property(\"stock\");\r",
+                  "        pm.expect(product).to.have.property(\"description\");\r",
+                  "        pm.expect(product).to.have.property(\"categoryId\");\r",
+                  "\r",
+                  "    });\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product values are valid\", function () {\r",
+                  "\r",
+                  "    json.products.forEach(product => {\r",
+                  "\r",
+                  "        pm.expect(product.price).to.be.at.least(0);\r",
+                  "        pm.expect(product.stock).to.be.at.least(0);\r",
+                  "        pm.expect(product.name).to.not.be.empty;\r",
+                  "        pm.expect(product.description).to.not.be.empty;\r",
+                  "\r",
+                  "    });\r",
+                  "\r",
+                  "});\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"Product data types are correct\", function () {\r",
+                  "\r",
+                  "    json.products.forEach(product => {\r",
+                  "\r",
+                  "        pm.expect(product.id).to.be.a(\"number\");\r",
+                  "        pm.expect(product.name).to.be.a(\"string\");\r",
+                  "        pm.expect(product.price).to.be.a(\"number\");\r",
+                  "        pm.expect(product.stock).to.be.a(\"number\");\r",
+                  "        pm.expect(product.description).to.be.a(\"string\");\r",
+                  "        pm.expect(product.categoryId).to.be.a(\"number\");\r",
+                  "\r",
+                  "    });\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "{{categoryId}}",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "var json= pm.response.json();\r",
+                  "pm.test(\"Message is correct\", function(){\r",
+                  "pm.expect(json.message).to.eql(\"Review created\")\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Review ID exists\",function(){\r",
+                  "    pm.expect(json.review.id).to.exist;\r",
+                  "    pm.expect(json.review.id).to.be.a(\"number\")\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product ID is correct\", function () {\r",
+                  "  pm.expect(json.review.productId).to.eql(Number(pm.variables.get(\"productId\")));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User ID exists\", function () {\r",
+                  "    pm.expect(json.review.userId).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Rating is correct\", function () {\r",
+                  "   pm.expect(json.review.rating).to.be.within(1,5);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Comment is correct\", function () {\r",
+                  "    pm.expect(json.review.comment).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CreatedAt exists\", function () {\r",
+                  "    pm.expect(json.review.createdAt).to.exist;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Excellent for teaching demos\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{productId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "{{productId}}",
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product Reviews",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json= pm.response.json();\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Array is not empty\", function () {\r",
+                  "    pm.expect(json.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Every review has valid fields\", function () {\r",
+                  "    json.forEach(review => {\r",
+                  "        pm.expect(review.id).to.be.a(\"number\");\r",
+                  "        pm.expect(review.productId).to.be.a(\"number\");\r",
+                  "        pm.expect(review.userId).to.be.a(\"number\");\r",
+                  "        pm.expect(review.rating).to.be.within(1, 5);\r",
+                  "        pm.expect(review.comment).to.be.a(\"string\");\r",
+                  "        pm.expect(review.createdAt).to.exist;\r",
+                  "        if (review.updatedAt !== null) {\r",
+                  "            pm.expect(review.updatedAt).to.be.a(\"string\");\r",
+                  "            pm.expect(Date.parse(review.updatedAt)).to.not.be.NaN;\r",
+                  "        } else {\r",
+                  "            pm.expect(review.updatedAt).to.be.null;\r",
+                  "        }\r",
+                  "        pm.expect(review.userName).to.be.a(\"string\");\r",
+                  "\r",
+                  "    });\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{productId}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "{{productId}}",
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var json= pm.response.json();\r",
+                  "pm.test(\"Message is correct\", function () {\r",
+                  "    pm.expect(json.message).to.eql(\"Review updated\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Review object exists\", function () {\r",
+                  "    pm.expect(json.review).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Review ID is valid\", function () {\r",
+                  "    pm.expect(json.review.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User ID is correct\", function () {\r",
+                  "    pm.expect(json.review.userId).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Rating is between 1 and 5\", function () {\r",
+                  "    pm.expect(json.review.rating).to.be.within(1,5);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Comment updated\", function () {\r",
+                  "    pm.expect(json.review.comment).to.be.a(\"string\")\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"CreatedAt is valid\", function () {\r",
+                  "    pm.expect(Date.parse(json.review.createdAt)).to.not.be.NaN;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"UpdatedAt is valid\", function () {\r",
+                  "    pm.expect(Date.parse(json.review.updatedAt)).to.not.be.NaN;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 2,\n  \"comment\": \" the prodect vary nice \"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reviews/{{reviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reviews",
+                "{{reviewId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Review",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var json= pm.response.json();\r",
+                  "pm.test(\"Message is correct\", function(){\r",
+                  "pm.expect(json.message).to.eql(\"Review deleted\")\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is less than 200ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reviews/{{reviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reviews",
+                "{{reviewId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"User ID is valid\", function () {\r",
+                  "    pm.expect(json.id).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Name is a string\", function () {\r",
+                  "    pm.expect(json.name).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Email is valid\", function () {\r",
+                  "    pm.expect(json.email).to.include(\"@\");\r",
+                  "});\r",
+                  "  pm.test(\"Role is correct\", function () {\r",
+                  "     pm.expect([\"student\", \"admin\"]).to.include(json.role); \r",
+                  "     });\r",
+                  "\r",
+                  "\r",
+                  "pm.test(\"Address is a string\", function () {\r",
+                  "    pm.expect(json.address).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Phone is a string\", function () {\r",
+                  "    pm.expect(json.phone).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Cart is an array\", function () {\r",
+                  "    pm.expect(json.cart).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Wishlist is an array\", function () {\r",
+                  "    pm.expect(json.wishlist).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update My Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json= pm.response.json();\r",
+                  "pm.test(\"Profile updated successfully\", function(){\r",
+                  "    pm.expect(json.message).to.eql(\"Profile updated\")\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User object exists\", function () {\r",
+                  "    pm.expect(json.user).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Updated fields are valid\", function () {\r",
+                  "    pm.expect(json.user.name).to.be.a(\"string\");\r",
+                  "    pm.expect(json.user.name).to.not.be.empty;\r",
+                  "\r",
+                  "    pm.expect(json.user.address).to.be.a(\"string\");\r",
+                  "    pm.expect(json.user.address).to.not.be.empty;\r",
+                  "\r",
+                  "    pm.expect(json.user.phone).to.be.a(\"string\");\r",
+                  "    pm.expect(json.user.phone).to.not.be.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Student Updated\",\n  \"address\": \"Cairo, Egypt\",\n  \"phone\": \"01000000000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Wishlist",
+      "item": [
+        {
+          "name": "Get Wishlist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Wishlist is not empty\", function () {\r",
+                  "    pm.expect(json.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Wishlist contains unique products\", function () {\r",
+                  "    let ids = json.map(item => item.id);\r",
+                  "    pm.expect(ids.length).to.eql(new Set(ids).size);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All wishlist items have valid data\", function () {\r",
+                  "    json.forEach(item => {\r",
+                  "        pm.expect(item.id).to.be.a(\"number\");\r",
+                  "        pm.expect(item.name).to.be.a(\"string\");\r",
+                  "        pm.expect(item.price).to.be.a(\"number\");\r",
+                  "        pm.expect(item.stock).to.be.a(\"number\");\r",
+                  "        pm.expect(item.description).to.be.a(\"string\");\r",
+                  "        pm.expect(item.categoryId).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/wishlist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wishlist"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Wishlist Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "var json=pm.response.json();\r",
+                  "pm.test(\"Response is correct message\", function(){\r",
+                  "pm.expect(json.message).to.eql(\"Item added to wishlist\")\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{productId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/wishlist/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wishlist",
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Wishlist Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  " var json= pm.response.json();\r",
+                  "pm.test(\"Response is correct message\", function(){\r",
+                  "pm.expect(json.message).to.eql(\"Item removed from wishlist\")\r",
+                  "});\r",
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/wishlist/items/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "wishlist",
+                "items",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "var json= pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Cart contains products\", function () {\r",
+                  "    pm.expect(json.items.length).to.be.above(0);\r",
+                  "});\r",
+                  "pm.test(\"Items is an array\", function () {\r",
+                  "    pm.expect(json.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each item has required properties\", function () {\r",
+                  "    json.items.forEach(function(item){\r",
+                  "        pm.expect(item).to.have.property(\"productId\");\r",
+                  "        pm.expect(item).to.have.property(\"quantity\");\r",
+                  "        pm.expect(item).to.have.property(\"product\");\r",
+                  "        pm.expect(item).to.have.property(\"lineTotal\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product object contains required fields\", function () {\r",
+                  "    json.items.forEach(function(item){\r",
+                  "        pm.expect(item.product).to.have.property(\"id\");\r",
+                  "        pm.expect(item.product).to.have.property(\"name\");\r",
+                  "        pm.expect(item.product).to.have.property(\"price\");\r",
+                  "        pm.expect(item.product).to.have.property(\"stock\");\r",
+                  "        pm.expect(item.product).to.have.property(\"description\");\r",
+                  "        pm.expect(item.product).to.have.property(\"categoryId\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Quantity is greater than zero\", function () {\r",
+                  "    json.items.forEach(function(item){\r",
+                  "        pm.expect(item.quantity).to.be.above(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "pm.test(\"Product price is valid\", function () {\r",
+                  "    json.items.forEach(function(item){\r",
+                  "        pm.expect(item.product.price).to.be.above(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "pm.test(\"Stock is valid\", function () {\r",
+                  "    json.items.forEach(function(item){\r",
+                  "        pm.expect(item.product.stock).to.be.at.least(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Line total is calculated correctly\", function () {\r",
+                  "    json.items.forEach(function(item){\r",
+                  "        pm.expect(item.lineTotal).to.eql(\r",
+                  "            item.quantity * item.product.price );\r",
+                  "    });\r",
+                  "    });\r",
+                  "pm.test(\"Subtotal is correct\", function () {\r",
+                  "    let sum = 0;\r",
+                  "    json.items.forEach(function(item){\r",
+                  "        sum += item.lineTotal;\r",
+                  "    });\r",
+                  "    pm.expect(json.subtotal).to.eql(sum);\r",
+                  "});\r",
+                  "pm.test(\"Coupon code is null or string\", function () {\r",
+                  "    if(json.couponCode !== null){\r",
+                  "        pm.expect(json.couponCode).to.be.a(\"string\");\r",
+                  "    }});\r",
+                  "    pm.test(\"Discount is zero or greater\", function () {\r",
+                  "      pm.expect(json.discount).to.be.at.least(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Total is calculated correctly\", function () {\r",
+                  "    pm.expect(json.total).to.eql(\r",
+                  "        json.subtotal - json.discount);\r",
+                  "    });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Item To Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "var json= pm.response.json();\r",
+                  "pm.test(\" message is correct'\", function () {\r",
+                  "    pm.expect(json.message).to.eql(\"Item added to cart\")\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": {{productId}},\n  \"quantity\": {{quantity}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cart Item Quantity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var json= pm.response.json();\r",
+                  "pm.test(\" message is correct'\", function () {\r",
+                  "    pm.expect(json.message).to.eql(\"Cart quantity updated\")\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response time is less than 100ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(100);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/items/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "items",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Item From Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "var json= pm.response.json();\r",
+                  "pm.test(\" message is correct\", function () {\r",
+                  "    pm.expect(json.message).to.eql(\"Item removed from cart\")\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/items/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "items",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Apply Coupon",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();\r",
+                  "pm.test(\"Message is correct\", function () {\r",
+                  "    pm.expect(json.message).to.eql(\"Coupon applied\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains required properties\", function () {\r",
+                  "    pm.expect(json).to.have.property(\"coupon\");\r",
+                  "    pm.expect(json).to.have.property(\"cart\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Coupon object contains required properties\", function () {\r",
+                  "    pm.expect(json.coupon).to.have.property(\"code\");\r",
+                  "    pm.expect(json.coupon).to.have.property(\"discountPercent\");\r",
+                  "    pm.expect(json.coupon).to.have.property(\"active\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Coupon code is correct\", function () {\r",
+                  "    pm.expect(json.coupon.code).to.eql(\"WELCOME10\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Discount percent is valid\", function () {\r",
+                  "    pm.expect(json.coupon.discountPercent).to.be.above(0);\r",
+                  "    pm.expect(json.coupon.discountPercent).to.be.at.most(10);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Coupon is active\", function () {\r",
+                  "    pm.expect(json.coupon.active).to.be.true;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Cart contains required properties\", function () {\r",
+                  "    pm.expect(json.cart).to.have.property(\"items\");\r",
+                  "    pm.expect(json.cart).to.have.property(\"subtotal\");\r",
+                  "    pm.expect(json.cart).to.have.property(\"couponCode\");\r",
+                  "    pm.expect(json.cart).to.have.property(\"discount\");\r",
+                  "    pm.expect(json.cart).to.have.property(\"total\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Coupon code is applied to cart\", function () {\r",
+                  "    pm.expect(json.cart.couponCode).to.eql(json.coupon.code);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Items is an array\", function () {\r",
+                  "    pm.expect(json.cart.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Total is calculated correctly\", function () {\r",
+                  "    pm.expect(json.cart.total).to.eql(\r",
+                  "        json.cart.subtotal - json.cart.discount\r",
+                  "    );\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"{{couponCode}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cart/apply-coupon",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cart",
+                "apply-coupon"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Checkout",
+      "item": [
+        {
+          "name": "Shipping Quote",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var jsonData = pm.response.json();\r",
+                  "pm.test(\"No empty values\", function () {\r",
+                  "    pm.expect(jsonData.country).to.not.be.empty;\r",
+                  "    pm.expect(jsonData.city).to.not.be.empty;\r",
+                  "    pm.expect(jsonData.postalCode).to.not.be.empty;\r",
+                  "});\r",
+                  "pm.test(\"Data types are correct\", function () {\r",
+                  "    pm.expect(jsonData.country).to.be.a(\"string\");\r",
+                  "    pm.expect(jsonData.city).to.be.a(\"string\");\r",
+                  "    pm.expect(jsonData.postalCode).to.be.a(\"string\");\r",
+                  "    pm.expect(jsonData.shippingCost).to.be.a(\"number\");\r",
+                  "});\r",
+                  "pm.test(\"Shipping cost is valid\", function () {\r",
+                  "    pm.expect(jsonData.shippingCost).to.be.at.least(0);\r",
+                  "       pm.expect(jsonData.shippingCost).to.be.below(1000);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"country\": \"Egypt\",\n  \"city\": \"Cairoo\",\n  \"postalCode\": \"115111\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/checkout/shipping-quote",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checkout",
+                "shipping-quote"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Checkout (Fake Payment)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  var json = pm.response.json();",
+                  "  if (json.order && json.order.id) pm.collectionVariables.set('orderId', json.order.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "checkout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Get My Orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json= pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Orders array is not empty\", function () {\r",
+                  "    pm.expect(json.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "json.forEach(order => {\r",
+                  "\r",
+                  "    pm.test(\"Order has required fields\", function () {\r",
+                  "        pm.expect(order).to.have.property(\"id\");\r",
+                  "        pm.expect(order).to.have.property(\"userId\");\r",
+                  "        pm.expect(order).to.have.property(\"items\");\r",
+                  "        pm.expect(order).to.have.property(\"subtotal\");\r",
+                  "        pm.expect(order).to.have.property(\"discount\");\r",
+                  "        pm.expect(order).to.have.property(\"total\");\r",
+                  "        pm.expect(order).to.have.property(\"paymentStatus\");\r",
+                  "        pm.expect(order).to.have.property(\"status\");\r",
+                  "        pm.expect(order).to.have.property(\"statusHistory\");\r",
+                  "        pm.expect(order).to.have.property(\"createdAt\");\r",
+                  "    });\r",
+                  "\r",
+                  "    pm.test(\"Data types are correct\", function () {\r",
+                  "        pm.expect(order.id).to.be.a(\"number\");\r",
+                  "        pm.expect(order.userId).to.be.a(\"number\");\r",
+                  "        pm.expect(order.items).to.be.an(\"array\");\r",
+                  "        pm.expect(order.subtotal).to.be.a(\"number\");\r",
+                  "        pm.expect(order.discount).to.be.a(\"number\");\r",
+                  "        pm.expect(order.total).to.be.a(\"number\");\r",
+                  "        pm.expect(order.paymentStatus).to.be.a(\"string\");\r",
+                  "        pm.expect(order.status).to.be.a(\"string\");\r",
+                  "        pm.expect(order.statusHistory).to.be.an(\"array\");\r",
+                  "        pm.expect(order.createdAt).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "\r",
+                  "    pm.test(\"Items array is not empty\", function () {\r",
+                  "        pm.expect(order.items.length).to.be.above(0);\r",
+                  "    });\r",
+                  "\r",
+                  "    order.items.forEach(item => {\r",
+                  "        pm.expect(item.productId).to.be.a(\"number\");\r",
+                  "        pm.expect(item.quantity).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "\r",
+                  "    pm.test(\"Status history is not empty\", function () {\r",
+                  "        pm.expect(order.statusHistory.length).to.be.above(0);\r",
+                  "    });\r",
+                  "    order.statusHistory.forEach(history => {\r",
+                  "        pm.expect(history.status).to.be.a(\"string\");\r",
+                  "        pm.expect(history.at).to.be.a(\"string\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Subtotal is greater than or equal to total\", function () {\r",
+                  "    json.forEach(order => {\r",
+                  "        pm.expect(order.subtotal).to.be.at.least(order.total);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Discount is not negative\", function () {\r",
+                  "    json.forEach(order => {\r",
+                  "        pm.expect(order.discount).to.be.at.least(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Total is not negative\", function () {\r",
+                  "    json.forEach(order => {\r",
+                  "        pm.expect(order.total).to.be.at.least(0);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Payment status exists\", function () {\r",
+                  "    json.forEach(order => {\r",
+                  "        pm.expect(order.paymentStatus).to.exist;\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Order status exists\", function () {\r",
+                  "    json.forEach(order => {\r",
+                  "        pm.expect(order.status).to.exist;\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "\r",
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Order ID matches requested ID\", function () {\r",
+                  "    pm.expect(json.id).to.eql(Number(pm.collectionVariables.get(\"orderId\")));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Data types are correct\", function () {\r",
+                  "    pm.expect(json.id).to.be.a(\"number\");\r",
+                  "    pm.expect(json.userId).to.be.a(\"number\");\r",
+                  "    pm.expect(json.items).to.be.an(\"array\");\r",
+                  "    pm.expect(json.subtotal).to.be.a(\"number\");\r",
+                  "    pm.expect(json.discount).to.be.a(\"number\");\r",
+                  "    pm.expect(json.total).to.be.a(\"number\");\r",
+                  "    pm.expect(json.paymentStatus).to.be.a(\"string\");\r",
+                  "    pm.expect(json.status).to.be.a(\"string\");\r",
+                  "    pm.expect(json.statusHistory).to.be.an(\"array\");\r",
+                  "    pm.expect(json.createdAt).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Items array is not empty\", function () {\r",
+                  "    pm.expect(json.items.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "json.items.forEach(item => {\r",
+                  "    pm.expect(item.productId).to.be.a(\"number\");\r",
+                  "    pm.expect(item.quantity).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status history is not empty\", function () {\r",
+                  "    pm.expect(json.statusHistory.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "json.statusHistory.forEach(history => {\r",
+                  "    pm.expect(history.status).to.be.a(\"string\");\r",
+                  "    pm.expect(history.at).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Subtotal is greater than or equal to total\", function () {\r",
+                  "    pm.expect(json.subtotal).to.be.at.least(json.total);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Discount is not negative\", function () {\r",
+                  "    pm.expect(json.discount).to.be.at.least(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Total is not negative\", function () {\r",
+                  "    pm.expect(json.total).to.be.at.least(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Success message is correct\", function () {\r",
+                  "    pm.expect(json.message).to.eql(\"Order cancelled\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Order status is CANCELLED\", function () {\r",
+                  "    pm.expect(json.order.status).to.eql(\"CANCELLED\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Cancelled date exists\", function () {\r",
+                  "    pm.expect(json.order.cancelledAt).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status history is not empty\", function () {\r",
+                  "    pm.expect(json.order.statusHistory.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Last status is CANCELLED\", function () {\r",
+                  "    let history = json.order.statusHistory;\r",
+                  "    let lastStatus = history[history.length - 1];\r",
+                  "    pm.expect(lastStatus.status).to.eql(\"CANCELLED\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Subtotal is greater than or equal to total\", function () {\r",
+                  "    pm.expect(json.order.subtotal).to.be.at.least(json.order.total);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Discount is not negative\", function () {\r",
+                  "    pm.expect(json.order.discount).to.be.at.least(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Order Tracking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var json= pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Required fields exist\", function () {\r",
+                  "    pm.expect(json).to.have.property(\"orderId\");\r",
+                  "    pm.expect(json).to.have.property(\"status\");\r",
+                  "    pm.expect(json).to.have.property(\"timeline\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Timeline is not empty\", function () {\r",
+                  "    pm.expect(json.timeline.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "json.timeline.forEach(step => {\r",
+                  "    pm.expect(step.status).to.be.a(\"string\");\r",
+                  "    pm.expect(step.at).to.be.a(\"string\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Current status matches last timeline status\", function () {\r",
+                  "    let lastStatus = json.timeline[json.timeline.length - 1];\r",
+                  "    pm.expect(json.status).to.eql(lastStatus.status);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Last timeline entry has timestamp\", function () {\r",
+                  "    let last = json.timeline[json.timeline.length - 1];\r",
+                  "    pm.expect(last.at).to.exist;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}/tracking",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}",
+                "tracking"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin Products",
+      "item": [
+        {
+          "name": "Admin Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "var json = pm.response.json();\r",
+                  "pm.test(\"Success message is correct\", function () {\r",
+                  "    pm.expect(json.message).to.eql(\"Product created\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product object exists\", function () {\r",
+                  "    pm.expect(json.product).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product contains all required fields\", function () {\r",
+                  "    pm.expect(json.product).to.have.property(\"id\");\r",
+                  "    pm.expect(json.product).to.have.property(\"name\");\r",
+                  "    pm.expect(json.product).to.have.property(\"price\");\r",
+                  "    pm.expect(json.product).to.have.property(\"stock\");\r",
+                  "    pm.expect(json.product).to.have.property(\"description\");\r",
+                  "    pm.expect(json.product).to.have.property(\"categoryId\");\r",
+                  "});\r",
+                  "pm.test(\"Product data is valid\", function () {\r",
+                  "    pm.expect(json.product.id).to.be.a(\"number\");\r",
+                  "\r",
+                  "    pm.expect(json.product.name).to.be.a(\"string\");\r",
+                  "    pm.expect(json.product.name).to.not.be.empty;\r",
+                  "\r",
+                  "    pm.expect(json.product.price).to.be.a(\"number\");\r",
+                  "    pm.expect(json.product.price).to.be.above(0);\r",
+                  "\r",
+                  "    pm.expect(json.product.stock).to.be.a(\"number\");\r",
+                  "    pm.expect(json.product.stock).to.be.at.least(0);\r",
+                  "\r",
+                  "    pm.expect(json.product.description).to.be.a(\"string\");\r",
+                  "    pm.expect(json.product.description).to.not.be.empty;\r",
+                  "\r",
+                  "    pm.expect(json.product.categoryId).to.be.a(\"number\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Demo Notebook\",\n  \"price\": 35,\n  \"stock\": 20,\n  \"description\": \"Notebook for API class\",\n  \"categoryId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Update Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Success message is correct\", function () {\r",
+                  "    pm.expect(json.message).to.eql(\"Product updated\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product object exists\", function () {\r",
+                  "    pm.expect(json.product).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product contains all required fields\", function () {\r",
+                  "    pm.expect(json.product).to.have.property(\"id\");\r",
+                  "    pm.expect(json.product).to.have.property(\"name\");\r",
+                  "    pm.expect(json.product).to.have.property(\"price\");\r",
+                  "    pm.expect(json.product).to.have.property(\"stock\");\r",
+                  "    pm.expect(json.product).to.have.property(\"description\");\r",
+                  "    pm.expect(json.product).to.have.property(\"categoryId\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Updated product data is valid\", function () {\r",
+                  "    pm.expect(json.product.id).to.be.a(\"number\");\r",
+                  "\r",
+                  "    pm.expect(json.product.name).to.be.a(\"string\");\r",
+                  "    pm.expect(json.product.name).to.not.be.empty;\r",
+                  "\r",
+                  "    pm.expect(json.product.price).to.be.a(\"number\");\r",
+                  "    pm.expect(json.product.price).to.be.above(0);\r",
+                  "\r",
+                  "    pm.expect(json.product.stock).to.be.a(\"number\");\r",
+                  "    pm.expect(json.product.stock).to.be.at.least(0);\r",
+                  "\r",
+                  "    pm.expect(json.product.description).to.be.a(\"string\");\r",
+                  "    pm.expect(json.product.description).to.not.be.empty;\r",
+                  "\r",
+                  "    pm.expect(json.product.categoryId).to.be.a(\"number\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Updated values are correct\", function () {\r",
+                  "    pm.expect(json.product.price).to.eql(40);\r",
+                  "    pm.expect(json.product.stock).to.eql(25);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 40,\n  \"stock\": 25\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "products",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Update Stock",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Success message is correct\", function () {\r",
+                  "    pm.expect(json.message).to.eql(\"Stock updated\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product object exists\", function () {\r",
+                  "    pm.expect(json.product).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product contains all required fields\", function () {\r",
+                  "    pm.expect(json.product).to.have.property(\"id\");\r",
+                  "    pm.expect(json.product).to.have.property(\"name\");\r",
+                  "    pm.expect(json.product).to.have.property(\"price\");\r",
+                  "    pm.expect(json.product).to.have.property(\"stock\");\r",
+                  "    pm.expect(json.product).to.have.property(\"description\");\r",
+                  "    pm.expect(json.product).to.have.property(\"categoryId\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Product data is valid\", function () {\r",
+                  "    pm.expect(json.product.id).to.be.a(\"number\");\r",
+                  "    pm.expect(json.product.name).to.be.a(\"string\");\r",
+                  "    pm.expect(json.product.price).to.be.a(\"number\");\r",
+                  "\r",
+                  "    pm.expect(json.product.stock).to.be.a(\"number\");\r",
+                  "    pm.expect(json.product.stock).to.be.at.least(0);\r",
+                  "    \r",
+                  "    pm.expect(json.product.description).to.be.a(\"string\");\r",
+                  "    pm.expect(json.product.categoryId).to.be.a(\"number\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stock\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/products/{{productId}}/stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "products",
+                "{{productId}}",
+                "stock"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Delete Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "var json = pm.response.json();\r",
+                  "pn.test(\" message is correct\",function(){\r",
+                  "    pm.expect(json.message).to.eql(\"Product deleted\")\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "products",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin Analytics",
+      "item": [
+        {
+          "name": "Sales Summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Sales summary contains all required fields\", function () {\r",
+                  "    pm.expect(json).to.have.property(\"ordersCount\");\r",
+                  "    pm.expect(json).to.have.property(\"totalRevenue\");\r",
+                  "    pm.expect(json).to.have.property(\"averageOrderValue\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Sales summary data is valid\", function () {\r",
+                  "    pm.expect(json.ordersCount).to.be.a(\"number\");\r",
+                  "    pm.expect(json.ordersCount).to.be.at.least(0);\r",
+                  "\r",
+                  "    pm.expect(json.totalRevenue).to.be.a(\"number\");\r",
+                  "    pm.expect(json.totalRevenue).to.be.at.least(0);\r",
+                  "\r",
+                  "    pm.expect(json.averageOrderValue).to.be.a(\"number\");\r",
+                  "    pm.expect(json.averageOrderValue).to.be.at.least(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/sales-summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "analytics",
+                "sales-summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Top Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "var json = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Response is an array\", function () {\r",
+                  "    pm.expect(json).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Top products list is not empty\", function () {\r",
+                  "    pm.expect(json.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Each product contains valid data\", function () {\r",
+                  "    json.forEach(product => {\r",
+                  "        pm.expect(product).to.have.property(\"productId\");\r",
+                  "        pm.expect(product).to.have.property(\"name\");\r",
+                  "        pm.expect(product).to.have.property(\"sold\");\r",
+                  "\r",
+                  "        pm.expect(product.productId).to.be.a(\"number\");\r",
+                  "        pm.expect(product.name).to.be.a(\"string\");\r",
+                  "        pm.expect(product.name).to.not.be.empty;\r",
+                  "\r",
+                  "        pm.expect(product.sold).to.be.a(\"number\");\r",
+                  "        pm.expect(product.sold).to.be.at.least(0);\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/analytics/top-products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "analytics",
+                "top-products"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": "student@example.com"
+    },
+    {
+      "key": "password",
+      "value": "123456"
+    },
+    {
+      "key": "name",
+      "value": "Student One"
+    },
+    {
+      "key": "productId",
+      "value": "1"
+    },
+    {
+      "key": "quantity",
+      "value": "2"
+    },
+    {
+      "key": "reviewId",
+      "value": "1"
+    },
+    {
+      "key": "orderId",
+      "value": "1"
+    },
+    {
+      "key": "categoryId",
+      "value": "1"
+    },
+    {
+      "key": "couponCode",
+      "value": "WELCOME10"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@example.com"
+    },
+    {
+      "key": "adminPassword",
+      "value": "123456"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "adminRefreshToken",
+      "value": ""
+    },
+    {
+      "key": "resetToken",
+      "value": ""
+    }
+  ]
+}
